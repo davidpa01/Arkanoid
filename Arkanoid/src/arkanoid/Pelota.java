@@ -5,11 +5,12 @@ import java.awt.Graphics;
 
 public class Pelota extends Actor {
 	
-	private int velocidadX = -5;
-	private int velocidadY = -5;
+	
 
 	public Pelota(int x, int y, String img) {
 		super(x, y, img);
+		this.velocidadX = -5;
+		this.velocidadY = -5;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -27,14 +28,15 @@ public class Pelota extends Actor {
 	@Override
 	public void actua() {
 		this.x += this.velocidadX;
+		MiCanvas limites = Arkanoid.getInstance().getCanvas();
 		
-		if (this.x < 0 || this.x > 770) {
+		if (this.x < 0 || (this.x + this.ancho) > limites.getWidth()) {
 			this.velocidadX = -this.velocidadX;
 		}
 		
 		this.y += this.velocidadY;
 		
-		if (this.y < 0 || this.y > 570) {
+		if (this.y < 0 || (this.y + this.alto) > limites.getHeight()) {
 			this.velocidadY = -this.velocidadY;
 		}
 	}

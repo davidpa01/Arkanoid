@@ -4,9 +4,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Ladrillo extends Actor {
+	
+	private Color color;
 
-	public Ladrillo(int x, int y, String img) {
+	
+
+	public Ladrillo(int x, int y, String img, Color color) {
 		super(x, y, img);
+		this.color = color;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -16,7 +21,7 @@ public class Ladrillo extends Actor {
 
 	@Override
 	public void paint(Graphics g) {
-		g.setColor(Color.BLUE);
+		g.setColor(color);
 		g.fillRect(this.x, this.y, this.ancho, this.alto);
 	}
 
@@ -24,6 +29,16 @@ public class Ladrillo extends Actor {
 	public void actua() {
 		// TODO Auto-generated method stub
 
+	}
+	
+	
+	
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
 	}
 
 }

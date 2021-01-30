@@ -6,6 +6,8 @@ public abstract class Actor {
 
 	protected int x, y, ancho = 30, alto = 30; 
 	protected String img;
+	protected int velocidadX = 0;
+	protected int velocidadY = 0;
 	
 	
 	
