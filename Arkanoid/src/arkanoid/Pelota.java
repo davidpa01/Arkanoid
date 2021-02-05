@@ -3,14 +3,16 @@ package arkanoid;
 import java.awt.Color;
 import java.awt.Graphics;
 
+
 public class Pelota extends Actor {
 	
 	
 
-	public Pelota(int x, int y, String img) {
-		super(x, y, img);
+	public Pelota(int x, int y) {
+		super(x, y);
 		this.velocidadX = -5;
 		this.velocidadY = -5;
+
 		// TODO Auto-generated constructor stub
 	}
 
@@ -27,6 +29,7 @@ public class Pelota extends Actor {
 
 	@Override
 	public void actua() {
+		super.actua();
 		this.x += this.velocidadX;
 		MiCanvas limites = Arkanoid.getInstance().getCanvas();
 		

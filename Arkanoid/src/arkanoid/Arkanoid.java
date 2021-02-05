@@ -2,6 +2,7 @@ package arkanoid;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -16,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 
+
 /**
  * 
  * @author david
@@ -28,6 +30,8 @@ public class Arkanoid {
 	private  MiCanvas canvas = null;
 	private JFrame ventana = null;
 	Nave nave = new Nave();
+	private List<Actor> actoresParaIncorporar = new ArrayList<Actor>();
+	private List<Actor> actoresParaEliminar = new ArrayList<Actor>();
 	
 	
 	private static Arkanoid instance = null;
@@ -100,7 +104,6 @@ public class Arkanoid {
 		
 		// Hago que la ventana sea visible
 		ventana.setVisible(true);
-		canvas.requestFocus();
 		
 		ventana.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		ventana.addWindowListener(new WindowAdapter() {
@@ -119,6 +122,9 @@ public class Arkanoid {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		ResourcesCache.getInstance().cargarRecursosEnMemoria();
+
+		
 		Arkanoid.getInstance().juego();
 	}
 	
@@ -132,11 +138,21 @@ public class Arkanoid {
 		do {
 			long millisAntesDeProcesarEscena = new Date().getTime();
 			
-			canvas.repaint();
+			if (ventana.getFocusOwner() != null && !ventana.getFocusOwner().equals(canvas)) {
+				canvas.requestFocus();
+			}
+			
+			canvas.pintaEscena();
 			
 			for (Actor a : actores) {
 				a.actua();
 			}
+			
+			
+			detectoColisiones();
+			
+			actualizaActores();
+			
 			
 			long millisDespuesDeProcesarEscena = new Date().getTime();
 			int millisDeProcesamientoDeEscena = (int) (millisDespuesDeProcesarEscena - millisAntesDeProcesarEscena);
@@ -151,7 +167,9 @@ public class Arkanoid {
 		}while (true);
 	}
 	
-	
+
+
+
 	/**
 	 * 
 	 * @param actores
@@ -160,20 +178,20 @@ public class Arkanoid {
 		
 		List<Actor> actores = new ArrayList<Actor>();
 		
-		Pelota pelota = new Pelota(300, 300, "");
+		Pelota pelota = new Pelota(300, 300);
 		Color[] color = new Color[] {Color.BLUE, Color.YELLOW, Color.red, Color.pink, Color.GREEN};
 		int x ;
 		int y = 0;
 		actores.add(pelota);
 		for (int i = 0; i < 5; i++) {
 			for (x = 0; x < 800; x+=40) {
-				Ladrillo ladrillo = new Ladrillo(x, y, "", color[i]);
+				Ladrillo ladrillo = new Ladrillo(x, y, color[i]);
 				actores.add(ladrillo);
 			}
 			y += 40;
 		}
 		
-		nave = new Nave(300, 500, "");
+		nave = new Nave(300, 500);
 		actores.add(nave);
 		return actores;
 	}
@@ -191,6 +209,69 @@ public class Arkanoid {
 			System.exit(0);
 		}
 	}
+	
+	
+	/**
+	 * 
+	 * @param a
+	 */
+	public void incorporaNuevoActor (Actor a) {
+		this.actoresParaIncorporar.add(a);
+	}
+	
+	
+	/**
+	 * 
+	 * @param a
+	 */
+	public void eliminaActor (Actor a) {
+		this.actoresParaEliminar.add(a);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	private void actualizaActores () {
+		// Incorporo los nuevos actores
+		for (Actor a : this.actoresParaIncorporar) {
+			this.actores.add(a);
+		}
+		this.actoresParaIncorporar.clear(); // Limpio la lista de actores a incorporar, ya están incorporados
+		
+		// Elimino los actores que se deben eliminar
+		for (Actor a : this.actoresParaEliminar) {
+			this.actores.remove(a);
+		}
+		this.actoresParaEliminar.clear(); // Limpio la lista de actores a eliminar, ya los he eliminado
+	}
+	
+	/**
+	 * 
+	 */
+	private void detectoColisiones() {
+		for (Actor actor1: this.actores) {
+			
+			Rectangle rect1 = new Rectangle(actor1.getX(), actor1.getY(), actor1.getAncho(), actor1.getAlto());
+			
+			for (Actor actor2 : this.actores) {
+				
+				if (!actor1.equals(actor2)) {
+
+					Rectangle rect2 = new Rectangle(actor2.getX(), actor2.getY(), actor2.getAncho(), actor2.getAlto());
+
+					if (rect1.intersects(rect2)) {
+						actor1.colisionaCon(actor2); 
+						actor2.colisionaCon(actor1); 
+					}
+				}
+			}
+		}
+	}
+
+	
+	
+	
 	
 	
 	/**

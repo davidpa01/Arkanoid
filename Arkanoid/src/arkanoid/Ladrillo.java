@@ -3,15 +3,18 @@ package arkanoid;
 import java.awt.Color;
 import java.awt.Graphics;
 
+
+
 public class Ladrillo extends Actor {
 	
 	private Color color;
 
 	
 
-	public Ladrillo(int x, int y, String img, Color color) {
-		super(x, y, img);
+	public Ladrillo(int x, int y, Color color) {
+		super(x, y);
 		this.color = color;
+
 		// TODO Auto-generated constructor stub
 	}
 
@@ -24,6 +27,7 @@ public class Ladrillo extends Actor {
 		g.setColor(color);
 		g.fillRect(this.x, this.y, this.ancho, this.alto);
 	}
+	
 
 	@Override
 	public void actua() {
@@ -33,6 +37,19 @@ public class Ladrillo extends Actor {
 	
 	
 	
+	
+	
+	@Override
+	public void colisionaCon(Actor a) {
+		super.colisionaCon(a);
+		
+		if (a instanceof Pelota) {
+			Arkanoid.getInstance().eliminaActor(this);
+			ResourcesCache.getInstance().playSonido("explosion.wav");
+			Arkanoid.getInstance().incorporaNuevoActor(new Explosion(this.x, this.y));
+		}
+	}
+
 	public Color getColor() {
 		return color;
 	}
